@@ -1,0 +1,98 @@
+# sam deploy --stack-name cfn-fn --template-file infra_fn.cfn.yaml --resolve-s3 --capabilities "CAPABILITY_IAM" "CAPABILITY_AUTO_EXPAND" 
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    EndpointConfiguration: REGIONAL
+    BinaryMediaTypes:
+      - "*/*"
+
+Parameters:
+  EnvId:
+    Type: String
+    Default: "devel"
+  BucketPrefix:
+    Type: String
+    Default: "ecomarkets"
+
+Resources:
+  MyS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub
+          - ${BucketPrefix}-${AWS::AccountId}-${AWS::Region}
+          - BucketPrefix: !Ref "BucketPrefix"
+      AccessControl: "Private"
+
+  MyLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "LambdaS3AccessRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+
+  LambdaS3AccessPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "LambdaS3AccessPolicy"
+      Roles:
+        - !Ref "MyLambdaRole"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+              - "s3:PutObject"
+              - "s3:PutObjectTagging"
+            Resource: !Sub "arn:aws:s3:::${MyS3Bucket}/*"
+
+  CfnApiFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
+      Runtime: java21
+      CodeUri: target/function.zip
+      MemorySize: 256
+      Timeout: 30
+      Policies: AWSLambdaBasicExecutionRole
+      Role: !GetAtt "MyLambdaRole.Arn"
+      Environment:
+        Variables:
+          QUARKUS_PROFILE: "prod"
+          QUARKUS_DATASOURCE_JDBC_URL:
+            Fn::ImportValue:
+              !Sub "${EnvId}-JDBCURL"
+          # TODO AVOID using master for app
+          QUARKUS_DATASOURCE_USERNAME:
+            !Sub '{{resolve:ssm:/${EnvId}/DBUsername}}'
+          QUARKUS_DATASOURCE_PASSWORD:
+            !Sub '{{resolve:ssm:/${EnvId}/DBPassword}}'
+          BUCKET_NAME: !Sub
+            - ${BucketPrefix}-${AWS::AccountId}-${AWS::Region}
+            - BucketPrefix: !Ref "BucketPrefix"
+          QUARKUS_S3_AWS_REGION:
+            !Sub ${AWS::Region}
+
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+
+Outputs:
+  CfnApiURL:
+    Description: URL for application
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/'
+    Export:
+      Name: CfnApiURL
+
+  MyS3BucketName:
+    Description: "Ecomarkets products images"
+    Value: !Sub
+      - ${BucketPrefix}-${AWS::AccountId}-${AWS::Region}
+      - BucketPrefix: !Ref "BucketPrefix"
