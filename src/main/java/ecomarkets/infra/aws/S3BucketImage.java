@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class S3BucketProductImage implements ImageDataRepository {
+public class S3BucketImage implements ImageDataRepository {
     @ConfigProperty(name = "bucket.name")
     private String bucketName;
 
