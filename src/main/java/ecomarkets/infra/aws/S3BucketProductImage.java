@@ -1,7 +1,7 @@
 package ecomarkets.infra.aws;
 
-import ecomarkets.domain.ImageRepository;
-import ecomarkets.domain.ProductImage;
+import ecomarkets.domain.ImageDataRepository;
+import ecomarkets.domain.Image;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class S3BucketProductImage implements ImageRepository {
+public class S3BucketProductImage implements ImageDataRepository {
     @ConfigProperty(name = "bucket.name")
     private String bucketName;
 
@@ -34,7 +34,7 @@ public class S3BucketProductImage implements ImageRepository {
     private S3Presigner presigner;
 
     public void save(Path file,
-                     ProductImage productImage) {
+                     Image productImage) {
 
         List<Tag> tagsS3 = getTags(productImage);
         s3.putObject(
@@ -47,7 +47,7 @@ public class S3BucketProductImage implements ImageRepository {
                 RequestBody.fromFile(file));
     }
 
-    public void delete(ProductImage productImage) {
+    public void delete(Image productImage) {
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(productImage.bucket())
                 .key(productImage.key())
@@ -56,7 +56,7 @@ public class S3BucketProductImage implements ImageRepository {
         s3.deleteObject(deleteRequest);
     }
 
-    public byte[] find(ProductImage productImage) {
+    public byte[] find(Image productImage) {
         try {
             return s3.getObject(GetObjectRequest.builder()
                        .bucket(productImage.bucket())
@@ -67,7 +67,7 @@ public class S3BucketProductImage implements ImageRepository {
         }
     }
 
-    public String createPresignedGetUrl(ProductImage productImage) {
+    public String createPresignedGetUrl(Image productImage) {
         GetObjectRequest objectRequest = GetObjectRequest.builder()
                 .bucket(productImage.bucket())
                 .key(productImage.key())
@@ -102,7 +102,7 @@ public class S3BucketProductImage implements ImageRepository {
         }
     }
 
-    private List<Tag> getTags(ProductImage productImage) {
+    private List<Tag> getTags(Image productImage) {
         List<Tag> tagsS3 = productImage.tags().stream().map(
                 t -> parseTagS3(t)
         ).collect(Collectors.toList());

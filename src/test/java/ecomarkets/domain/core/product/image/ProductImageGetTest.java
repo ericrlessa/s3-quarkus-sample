@@ -1,7 +1,7 @@
 package ecomarkets.domain.core.product.image;
 
-import ecomarkets.domain.ProductImage;
-import ecomarkets.domain.ProductImageBuilder;
+import ecomarkets.domain.Image;
+import ecomarkets.domain.ImageBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,19 +21,19 @@ import static org.hamcrest.Matchers.notNullValue;
 public class ProductImageGetTest extends ProductImageTest{
     @Inject
     S3Client s3Client;
-    ProductImage productImage;
+    Image productImage;
 
     @BeforeEach
     @Transactional
     void startProductFixture(){
-        productImage = ProductImageBuilder.newInstance()
+        productImage = ImageBuilder.newInstance()
                 .withFileName(fileName)
                 .withBucket(bucketName)
                 .withMimeType(mimetype)
                 .addTag("fileName", fileName).build();
         productImage.persist();
 
-        imageRepository.save(file, productImage);
+        imageDataRepository.save(file, productImage);
     }
     @Test
     public void testGetS3ProductImage() {

@@ -1,33 +1,32 @@
 package ecomarkets.domain;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
 import org.hibernate.annotations.Immutable;
 
 import java.util.List;
 
 @Entity
 @Immutable
-public class ProductImage extends PanacheEntity {
-
+public class Image extends PanacheEntity {
     private String bucket;
     private String mimetype;
     private String filename;
-    @Transient
+    @ElementCollection
     private List<Tag> tags;
 
-    ProductImage(String bucket, String mimetype, String filename, List<Tag> tags) {
+    Image(String bucket, String mimetype, String filename, List<Tag> tags) {
         this.bucket = bucket;
         this.mimetype = mimetype;
         this.filename = filename;
         this.tags = tags;
     }
 
-    private ProductImage(){
+    private Image(){
     }
 
-    public ProductImage addTag(String key, String value){
+    public Image addTag(String key, String value){
         tags.add(new Tag(key, value));
         return this;
     }

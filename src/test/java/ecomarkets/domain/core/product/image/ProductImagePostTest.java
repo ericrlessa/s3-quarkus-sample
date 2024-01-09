@@ -1,6 +1,6 @@
 package ecomarkets.domain.core.product.image;
 
-import ecomarkets.domain.ProductImage;
+import ecomarkets.domain.Image;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 
@@ -24,16 +24,16 @@ public class ProductImagePostTest extends ProductImageTest {
                 .extract()
                 .body().asString(); // Adjust the expected status code as needed
 
-        ProductImage img = ProductImage.findById(Long.valueOf(id));
+        Image img = Image.findById(Long.valueOf(id));
         assertThat(img, notNullValue());
         assertThat(img.bucket(), equalTo(bucketName));
         assertThat(img.id, notNullValue());
         assertThat(img.fileName(), equalTo(fileName));
         assertThat(img.mimeType(), equalTo(mimetype));
 
-        byte [] imageFileData = imageRepository.find(img);
+        byte [] imageFileData = imageDataRepository.find(img);
         assertThat(imageFileData, notNullValue());
 
-        imageRepository.delete(img);
+        imageDataRepository.delete(img);
     }
 }

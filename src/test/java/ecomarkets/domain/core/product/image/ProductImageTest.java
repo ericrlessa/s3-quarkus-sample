@@ -1,6 +1,6 @@
 package ecomarkets.domain.core.product.image;
 
-import ecomarkets.domain.ImageRepository;
+import ecomarkets.domain.ImageDataRepository;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -14,5 +14,5 @@ public abstract class ProductImageTest {
     @ConfigProperty(name = "bucket.name")
     String bucketName;
     @Inject
-    ImageRepository imageRepository;
+    ImageDataRepository imageDataRepository;
 }

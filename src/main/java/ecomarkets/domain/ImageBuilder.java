@@ -3,41 +3,41 @@ package ecomarkets.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductImageBuilder {
+public class ImageBuilder {
     private String bucket;
     private String mimeType;
     private String fileName;
     private List<Tag> tags;
 
-    private ProductImageBuilder() {
+    private ImageBuilder() {
         this.tags = new ArrayList<>();
     }
 
-    public static ProductImageBuilder newInstance() {
-        return new ProductImageBuilder();
+    public static ImageBuilder newInstance() {
+        return new ImageBuilder();
     }
-    public ProductImageBuilder withFileName(String fileName) {
+    public ImageBuilder withFileName(String fileName) {
         this.fileName = fileName;
         return this;
     }
-    public ProductImageBuilder withMimeType(String mimeType) {
+    public ImageBuilder withMimeType(String mimeType) {
         this.mimeType = mimeType;
         return this;
     }
-    public ProductImageBuilder withBucket(String bucket) {
+    public ImageBuilder withBucket(String bucket) {
         this.bucket = bucket;
         return this;
     }
-    public ProductImageBuilder addTag(String key, String value) {
+    public ImageBuilder addTag(String key, String value) {
         this.tags.add(new Tag(key, value));
         return this;
     }
 
-    public ProductImage build() {
+    public Image build() {
         if(bucket == null){
             throw new IllegalStateException("bucket should not be null");
         }
-        ProductImage productImage = new ProductImage(bucket, mimeType, fileName, tags);
+        Image productImage = new Image(bucket, mimeType, fileName, tags);
         return productImage;
     }
 }
