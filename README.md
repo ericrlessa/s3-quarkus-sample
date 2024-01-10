@@ -1,4 +1,4 @@
-# ecomarkets
+# s3-quarkus-sample
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
