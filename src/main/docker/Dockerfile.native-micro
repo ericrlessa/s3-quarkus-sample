@@ -10,11 +10,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/ecomarkets .
+# docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/s3sample .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/ecomarkets
+# docker run -i --rm -p 8080:8080 quarkus/s3sample
 #
 ###
 FROM quay.io/quarkus/quarkus-micro-image:2.0

@@ -1,6 +1,6 @@
-package ecomarkets.domain.core.product.image;
+package s3sample.domain.core.product.image;
 
-import ecomarkets.domain.Image;
+import s3sample.domain.Image;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
 

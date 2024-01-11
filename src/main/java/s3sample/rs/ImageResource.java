@@ -1,14 +1,12 @@
-package ecomarkets.rs;
+package s3sample.rs;
 
-import ecomarkets.domain.ImageDataRepository;
-import ecomarkets.domain.Image;
-import ecomarkets.domain.ImageBuilder;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.apache.http.HttpStatus;
-import org.jboss.resteasy.reactive.ResponseStatus;
+import s3sample.domain.Image;
+import s3sample.domain.ImageBuilder;
+import s3sample.domain.ImageDataRepository;
 
 @Path("/image")
 public class ImageResource {
@@ -17,7 +15,6 @@ public class ImageResource {
     private ImageDataRepository imageDataRepository;
 
     @POST
-    @ResponseStatus(HttpStatus.SC_OK)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Transactional
     public void saveImage(ImageFormData imageFormData){

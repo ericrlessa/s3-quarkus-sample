@@ -18,9 +18,9 @@ sleep 3
 
 
 sam deploy \
-  --template-file "infrastructure.cfn.yaml" \
+  --template-file "infra_fn.cfn.yaml" \
   --stack-name  "${STACK_NAME}" \
-  --capabilities "CAPABILITY_IAM" "CAPABILITY_AUTO_EXPAND" \
+  --capabilities "CAPABILITY_IAM" "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM" \
   --resolve-s3 \
   --parameter-overrides "EnvId=$ENV_ID" \
   --disable-rollback

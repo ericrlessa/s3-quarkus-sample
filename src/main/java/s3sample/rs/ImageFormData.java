@@ -1,4 +1,4 @@
-package ecomarkets.rs;
+package s3sample.rs;
 
 import jakarta.ws.rs.core.MediaType;
 import org.jboss.resteasy.reactive.PartType;

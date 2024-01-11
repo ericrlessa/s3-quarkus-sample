@@ -1,4 +1,4 @@
-package ecomarkets.domain;
+package s3sample.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

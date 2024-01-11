@@ -1,7 +1,7 @@
-package ecomarkets.infra.aws;
+package s3sample.infra.aws;
 
-import ecomarkets.domain.ImageDataRepository;
-import ecomarkets.domain.Image;
+import s3sample.domain.ImageDataRepository;
+import s3sample.domain.Image;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -90,7 +90,7 @@ public class S3BucketImage implements ImageDataRepository {
         return tagsS3;
     }
 
-    private Tag parseTagS3(ecomarkets.domain.Tag t) {
+    private Tag parseTagS3(s3sample.domain.Tag t) {
         return Tag.builder().key(t.key()).value(t.value()).build();
     }
     @PostConstruct
