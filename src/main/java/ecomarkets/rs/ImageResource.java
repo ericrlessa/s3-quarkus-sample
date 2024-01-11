@@ -11,7 +11,7 @@ import org.apache.http.HttpStatus;
 import org.jboss.resteasy.reactive.ResponseStatus;
 
 @Path("/image")
-public class ProductImageResource {
+public class ImageResource {
 
     @Inject
     private ImageDataRepository imageDataRepository;
