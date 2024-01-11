@@ -3,12 +3,10 @@ package ecomarkets.domain.core.product.image;
 import ecomarkets.domain.Image;
 import ecomarkets.domain.ImageBuilder;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,8 +17,6 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
 public class ProductImageGetTest extends ProductImageTest{
-    @Inject
-    S3Client s3Client;
     Image productImage;
 
     @BeforeEach

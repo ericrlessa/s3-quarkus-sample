@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
 public class ProductImagePostTest extends ProductImageTest {
-
     public void testUpdateS3ProductImage() {
         String id = given()
             .multiPart("file", file)

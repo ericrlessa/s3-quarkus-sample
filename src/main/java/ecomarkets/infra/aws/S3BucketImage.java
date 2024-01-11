@@ -23,15 +23,16 @@ import java.util.stream.Collectors;
 public class S3BucketImage implements ImageDataRepository {
     @ConfigProperty(name = "bucket.name")
     private String bucketName;
-
     @ConfigProperty(name = "presigned.url.duration.in.minutes")
     private Integer presignedUrlDurationInMinutes;
-
     @Inject
     private S3Client s3;
-
     @Inject
     private S3Presigner presigner;
+
+    public String getBucketName(){
+        return this.bucketName;
+    }
 
     public void save(Path file,
                      Image productImage) {
@@ -46,7 +47,6 @@ public class S3BucketImage implements ImageDataRepository {
                 .build(),
                 RequestBody.fromFile(file));
     }
-
     public void delete(Image productImage) {
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(productImage.bucket())
@@ -83,7 +83,18 @@ public class S3BucketImage implements ImageDataRepository {
         return presignedRequest.url().toExternalForm();
     }
 
+    private List<Tag> getTags(Image productImage) {
+        List<Tag> tagsS3 = productImage.tags().stream().map(
+                t -> parseTagS3(t)
+        ).collect(Collectors.toList());
+        return tagsS3;
+    }
+
+    private Tag parseTagS3(ecomarkets.domain.Tag t) {
+        return Tag.builder().key(t.key()).value(t.value()).build();
+    }
     @PostConstruct
+
     private void createBucket() {
         try {
             try {
@@ -98,23 +109,7 @@ public class S3BucketImage implements ImageDataRepository {
                 s3.createBucket(bucketRequest);
             }
         } catch (Exception e) {
-            //FIXME add log or change this. But should not prohibit the startup of the app
+            //FIXME add log
         }
     }
-
-    private List<Tag> getTags(Image productImage) {
-        List<Tag> tagsS3 = productImage.tags().stream().map(
-                t -> parseTagS3(t)
-        ).collect(Collectors.toList());
-        return tagsS3;
-    }
-
-    private Tag parseTagS3(ecomarkets.domain.Tag t) {
-        return Tag.builder().key(t.key()).value(t.value()).build();
-    }
-
-    public String getBucketName(){
-        return this.bucketName;
-    }
-
 }
