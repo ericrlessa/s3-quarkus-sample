@@ -27,7 +27,7 @@ public class Image extends PanacheEntity {
     }
 
     public Image addTag(String key, String value){
-        tags.add(new Tag(key, value));
+        tags.add(Tag.of(key, value));
         return this;
     }
     public String bucket(){

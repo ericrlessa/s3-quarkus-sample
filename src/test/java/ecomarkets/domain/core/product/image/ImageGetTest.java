@@ -26,7 +26,10 @@ public class ImageGetTest extends ImageTest {
                 .withFileName(fileName)
                 .withBucket(bucketName)
                 .withMimeType(mimetype)
-                .addTag("fileName", fileName).build();
+                .addTag("fileName", fileName)
+                .addTag("city", "Vitoria")
+                .addTag("country", "Brasil")
+                .build();
         productImage.persist();
 
         imageDataRepository.save(file, productImage);

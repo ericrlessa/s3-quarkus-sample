@@ -29,7 +29,7 @@ public class ImageBuilder {
         return this;
     }
     public ImageBuilder addTag(String key, String value) {
-        this.tags.add(new Tag(key, value));
+        this.tags.add(Tag.of(key, value));
         return this;
     }
 
