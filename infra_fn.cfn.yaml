@@ -1,5 +1,4 @@
-# sam deploy --stack-name cfn-fn --template-file infra_fn.cfn.yaml --resolve-s3 --capabilities "CAPABILITY_IAM" "CAPABILITY_AUTO_EXPAND" 
-
+# sam deploy --stack-name cfn-fn --template-file infra_fn.cfn.yaml --resolve-s3 --capabilities "CAPABILITY_IAM" "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM"
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Globals:
@@ -14,7 +13,7 @@ Parameters:
     Default: "devel"
   BucketPrefix:
     Type: String
-    Default: "ecomarkets"
+    Default: "quarkus-sample"
 
 Resources:
   MyS3Bucket:
@@ -36,6 +35,22 @@ Resources:
             Principal:
               Service: "lambda.amazonaws.com"
             Action: "sts:AssumeRole"
+
+  LambdaS3AccessPolicyLogs:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "LambdaS3AccessPolicyLogs"
+      Roles:
+        - !Ref "MyLambdaRole"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+              - "s3:PutObject"
+              - "s3:PutObjectTagging"
+            Resource: '*'
 
   LambdaS3AccessPolicy:
     Type: "AWS::IAM::Policy"
@@ -66,14 +81,6 @@ Resources:
       Environment:
         Variables:
           QUARKUS_PROFILE: "prod"
-          QUARKUS_DATASOURCE_JDBC_URL:
-            Fn::ImportValue:
-              !Sub "${EnvId}-JDBCURL"
-          # TODO AVOID using master for app
-          QUARKUS_DATASOURCE_USERNAME:
-            !Sub '{{resolve:ssm:/${EnvId}/DBUsername}}'
-          QUARKUS_DATASOURCE_PASSWORD:
-            !Sub '{{resolve:ssm:/${EnvId}/DBPassword}}'
           BUCKET_NAME: !Sub
             - ${BucketPrefix}-${AWS::AccountId}-${AWS::Region}
             - BucketPrefix: !Ref "BucketPrefix"
@@ -92,7 +99,7 @@ Outputs:
       Name: CfnApiURL
 
   MyS3BucketName:
-    Description: "Ecomarkets products images"
+    Description: "Images Bucket"
     Value: !Sub
       - ${BucketPrefix}-${AWS::AccountId}-${AWS::Region}
       - BucketPrefix: !Ref "BucketPrefix"

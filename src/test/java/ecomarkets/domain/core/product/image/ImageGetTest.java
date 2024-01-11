@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
-public class ProductImageGetTest extends ProductImageTest{
+public class ImageGetTest extends ImageTest {
     Image productImage;
 
     @BeforeEach

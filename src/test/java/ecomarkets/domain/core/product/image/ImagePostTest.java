@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
-public class ProductImagePostTest extends ProductImageTest {
+public class ImagePostTest extends ImageTest {
     public void testUpdateS3ProductImage() {
         String id = given()
             .multiPart("file", file)
