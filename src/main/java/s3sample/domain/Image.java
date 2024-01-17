@@ -3,7 +3,6 @@ package s3sample.domain;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
 import org.hibernate.annotations.Immutable;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public class Image extends PanacheEntity {
     private String bucket;
     private String mimetype;
     private String filename;
-    @Transient
+    @ElementCollection
     private List<Tag> tags;
 
     Image(String bucket, String mimetype, String filename, List<Tag> tags) {

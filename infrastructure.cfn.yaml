@@ -1,0 +1,44 @@
+Description: Sample Nested Template
+
+Parameters:
+  EnvId:
+    Type: String
+    Default: "devel"
+    Description: Id for the Environment (Stack of Stacks)
+  DBUsername:
+    Type: String
+    Default: "test"
+  DBPassword:
+    Type: String
+    Default: "MyPassword123"
+
+Resources:
+
+  NetStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: infra_net.cfn.yaml
+      Parameters:
+        EnvId: !Ref EnvId
+
+  DBStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+         - NetStack
+    Properties:
+      TemplateURL: infra_db.cfn.yaml
+      Parameters:
+        EnvId: !Ref EnvId
+        DBUsername: !Ref DBUsername
+        DBPassword: !Ref DBPassword
+
+  FnStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+         - DBStack
+    Properties:
+      TemplateURL: infra_fn.cfn.yaml
+      Parameters:
+        EnvId: !Ref EnvId
+        DBUsername: !Ref DBUsername
+        DBPassword: !Ref DBPassword

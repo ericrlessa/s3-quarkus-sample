@@ -18,7 +18,7 @@ sleep 3
 
 
 sam deploy \
-  --template-file "infra_fn.cfn.yaml" \
+  --template-file "infrastructure.cfn.yaml" \
   --stack-name  "${STACK_NAME}" \
   --capabilities "CAPABILITY_IAM" "CAPABILITY_AUTO_EXPAND" "CAPABILITY_NAMED_IAM" \
   --resolve-s3 \

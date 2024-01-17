@@ -1,0 +1,104 @@
+# sam deploy --stack-name "$ENV_ID-net" --template-file infra_net.cfn.yaml --resolve-s3 --capabilities CAPABILITY_IAM --parameter-overrides EnvId="$ENV_ID"
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation Sample Template: VPC with 2 Public Subnets'
+
+Parameters:
+  EnvId:
+    Type: String
+    Default: "devel" 
+
+Resources:
+
+
+  CfnVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: '10.0.0.0/16'
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: CfnVPC
+
+  CfnInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+
+  CfnVPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref CfnVPC
+      InternetGatewayId: !Ref CfnInternetGateway
+
+  CfnPublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref CfnVPC
+      CidrBlock: '10.0.0.0/24'
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+
+  CfnPublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref CfnVPC
+      CidrBlock: '10.0.2.0/24'
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+
+  CfnPublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref CfnVPC
+
+  CfnPublicRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: CfnVPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref CfnPublicRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref CfnInternetGateway
+
+  CfnSubnetRouteTableAssociation1:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref CfnPublicSubnet1
+      RouteTableId: !Ref CfnPublicRouteTable
+
+  CfnSubnetRouteTableAssociation2:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref CfnPublicSubnet2
+      RouteTableId: !Ref CfnPublicRouteTable
+
+Outputs:
+  VPCId:
+    Description: The ID of the VPC
+    Value: !Ref CfnVPC
+    Export:
+      Name: !Sub "${EnvId}-VPCId"
+      
+  PublicSubnet1Id:
+    Description: The ID of the first public subnet
+    Value: !Ref CfnPublicSubnet1
+    Export:
+      Name: !Sub '${EnvId}-PublicSubnet1Id'
+
+  PublicSubnet2Id:
+    Description: The ID of the second public subnet
+    Value: !Ref CfnPublicSubnet2
+    Export:
+      Name: !Sub '${EnvId}-PublicSubnet2Id'
+
+  InternetGatewayId:
+    Description: The ID of the Internet Gateway
+    Value: !Ref CfnInternetGateway
+    Export:
+      Name: !Sub '${EnvId}-InternetGatewayId'
+
+  PublicRouteTableId:
+    Description: The ID of the public Route Table
+    Value: !Ref CfnPublicRouteTable
+    Export:
+      Name: !Sub '${EnvId}-PublicRouteTableId'
+
+

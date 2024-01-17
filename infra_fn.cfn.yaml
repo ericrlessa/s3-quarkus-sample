@@ -14,6 +14,10 @@ Parameters:
   BucketPrefix:
     Type: String
     Default: "quarkus-sample"
+  DBUsername:
+    Type: String
+  DBPassword:
+    Type: String
 
 Resources:
   MyS3Bucket:
@@ -86,6 +90,13 @@ Resources:
             - BucketPrefix: !Ref "BucketPrefix"
           QUARKUS_S3_AWS_REGION:
             !Sub ${AWS::Region}
+          QUARKUS_DATASOURCE_JDBC_URL:
+            Fn::ImportValue:
+              !Sub "${EnvId}-JDBCURL"
+          QUARKUS_DATASOURCE_USERNAME:
+            !Sub '${DBUsername}'
+          QUARKUS_DATASOURCE_PASSWORD:
+            !Sub '${DBPassword}'
 
       Events:
         HttpApiEvent:
