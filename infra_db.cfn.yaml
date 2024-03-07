@@ -1,7 +1,7 @@
 # sam deploy --stack-name "$ENV_ID-db" --template-file infra_db.cfn.yaml --resolve-s3 --capabilities CAPABILITY_IAM --parameter-overrides EnvId="$ENV_ID"
 
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'AWS CloudFormation Template: MySQL Database'
+Description: 'AWS CloudFormation Template: MariaDB Database'
 Parameters:
   EnvId:
     Type: String
@@ -17,7 +17,7 @@ Parameters:
   DBClusterInstanceClass:
     Description: InstanceClass
     Type: String
-    Default: 'db.t2.micro'
+    Default: 'db.t3.micro'
   PubliclyAccessible:
     Description: PubliclyAccessible
     Type: String
@@ -35,7 +35,7 @@ Resources:
   CfnDbSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: 'Security group for MySQL Database'
+      GroupDescription: 'Security group for MariaDB Database'
       VpcId: 
         Fn::ImportValue:
           !Sub '${EnvId}-VPCId'
@@ -59,8 +59,8 @@ Resources:
   CfnDBInstance:
     Type: 'AWS::RDS::DBInstance'
     Properties:
-      Engine: 'mysql'
-      EngineVersion: '8.0'
+      Engine: 'mariadb'
+      EngineVersion: '10.11'
       MasterUsername: !Ref DBUsername
       MasterUserPassword: !Ref DBPassword
       VPCSecurityGroups: 
@@ -86,7 +86,7 @@ Outputs:
     Value: !GetAtt CfnDbSecurityGroup.GroupId
   JDBCURL:
     Description: JDBC URL
-    Value: !Sub "jdbc:mysql://${CfnDBInstance.Endpoint.Address}:${CfnDBInstance.Endpoint.Port}/${DBName}"
+    Value: !Sub "jdbc:mariadb://${CfnDBInstance.Endpoint.Address}:${CfnDBInstance.Endpoint.Port}/${DBName}"
     Export:
       Name:  !Sub "${EnvId}-JDBCURL"
 
