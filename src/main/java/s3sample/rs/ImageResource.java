@@ -17,7 +17,7 @@ public class ImageResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Transactional
-    public void saveImage(ImageFormData imageFormData){
+    public Image saveImage(ImageFormData imageFormData){
         Image image = ImageBuilder.newInstance()
                 .withBucket(imageDataRepository.getBucketName())
                 .withFileName(imageFormData.fileName)
@@ -25,6 +25,8 @@ public class ImageResource {
                 .addTag("fileName", imageFormData.fileName).build();
         image.persist();
         imageDataRepository.save(imageFormData.file.toPath(), image);
+
+        return image;
     }
 
     @Path("/{id}")

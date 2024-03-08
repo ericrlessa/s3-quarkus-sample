@@ -1,5 +1,6 @@
 package s3sample.domain.core.product.image;
 
+import org.junit.jupiter.api.Test;
 import s3sample.domain.Image;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.http.HttpStatus;
@@ -11,8 +12,10 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
 public class ImagePostTest extends ImageTest {
+
+    @Test
     public void testUpdateS3ProductImage() {
-        String id = given()
+        Integer id = given()
             .multiPart("file", file)
             .multiPart("fileName", fileName)
             .multiPart("mimeType", mimetype)
@@ -20,10 +23,9 @@ public class ImagePostTest extends ImageTest {
             .post("/api/image")
             .then()
             .statusCode(HttpStatus.SC_OK)
-                .extract()
-                .body().asString(); // Adjust the expected status code as needed
+                .extract().path("id");
 
-        Image img = Image.findById(Long.valueOf(id));
+        Image img = Image.findById(id);
         assertThat(img, notNullValue());
         assertThat(img.bucket(), equalTo(bucketName));
         assertThat(img.id, notNullValue());
